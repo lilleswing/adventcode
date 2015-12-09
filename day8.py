@@ -1,5 +1,6 @@
 import re
 
+
 def solve1(lines):
     def score(st):
         st = st[1:-1]
@@ -7,18 +8,23 @@ def solve1(lines):
         p2 = len(re.findall("\\\\\"", st))
         p3 = len(re.findall("\\\\\\\\", st))
         my_score = p1 + p2 + p3 + 2
-        #print(st, my_score)
+        # print(st, my_score)
         return 2 + p1 + p2 + p3
+
     total = 0
     for line in lines:
         total += score(line)
     return total
 
+
 def solve2(lines):
     def score(st):
-        st = '"' + st + '"'
-        st2 = re.escape(st)
-        return len(st2) - len(st)
+        st = st[1:-1]
+        p1 = len(re.findall("\\\\x[1234567890abcdef][1234567890abcdef]", st))
+        p2 = len(re.findall("\\\\\"", st)) * 2
+        p3 = len(re.findall("\\\\\\\\", st)) * 2
+        return 4 + p1 + p2 + p3
+
     total = 0
     for line in lines:
         total += score(line)
