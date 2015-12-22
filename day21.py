@@ -1,3 +1,6 @@
+import itertools
+
+
 class Boss(object):
     def __init__(self):
         self.hp = 104
@@ -73,41 +76,34 @@ def win_fight(player, boss):
 def solve1():
     boss = Boss()
     lowest_cost = float('inf')
-    for weapon in weapons:
-        for armor in armors:
-            for i in xrange(len(rings)):
-                for j in xrange(i + 1, len(rings)):
-                    ring1 = rings[i]
-                    ring2 = rings[j]
-                    player = Player()
-                    player.add_gear(ring1)
-                    player.add_gear(ring2)
-                    player.add_gear(weapon)
-                    player.add_gear(armor)
-                    is_winner = win_fight(player, boss)
-                    if is_winner:
-                        lowest_cost = min(lowest_cost, player.cost)
+    for weapon, armor, ring1, ring2 in itertools.product(weapons, armors, rings, rings):
+        player = Player()
+        player.add_gear(ring1)
+        player.add_gear(ring2)
+        player.add_gear(weapon)
+        player.add_gear(armor)
+        is_winner = win_fight(player, boss)
+        if is_winner:
+            lowest_cost = min(lowest_cost, player.cost)
     print(lowest_cost)
 
 
 def solve2():
     boss = Boss()
     highest_cost = -1 * float('inf')
-    for weapon in weapons:
-        for armor in armors:
-            for i in xrange(len(rings)):
-                for j in xrange(i + 1, len(rings)):
-                    ring1 = rings[i]
-                    ring2 = rings[j]
-                    player = Player()
-                    player.add_gear(ring1)
-                    player.add_gear(ring2)
-                    player.add_gear(weapon)
-                    player.add_gear(armor)
-                    is_winner = win_fight(player, boss)
-                    if not is_winner:
-                        highest_cost = max(highest_cost, player.cost)
+    for weapon, armor, ring1, ring2 in itertools.product(weapons, armors, rings, rings):
+        if ring1 == ring2:
+            continue
+        player = Player()
+        player.add_gear(ring1)
+        player.add_gear(ring2)
+        player.add_gear(weapon)
+        player.add_gear(armor)
+        is_winner = win_fight(player, boss)
+        if not is_winner:
+            highest_cost = max(highest_cost, player.cost)
     print(highest_cost)
+
 
 if __name__ == "__main__":
     solve1()
