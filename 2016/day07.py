@@ -61,11 +61,7 @@ def solve2():
             if i % 2 == 1:
                 odd_matches.extend(get_triples(part))
         inverse_odd = [reverse_match(x) for x in odd_matches]
-        works = False
-        for match in inverse_odd:
-            if match in even_matches:
-                works = True
-                break
+        works = any([x in even_matches for x in inverse_odd])
         if works:
             total += 1
     return total
