@@ -32,7 +32,7 @@ def solve2(containers, size):
 
 
 def main():
-    containers = [int(x.strip()) for x in open('day17.in').readlines()]
+    containers = [int(x.strip()) for x in open('day15.in').readlines()]
     print(solve1(containers, 150))
     print(solve2(containers, 150))
 
