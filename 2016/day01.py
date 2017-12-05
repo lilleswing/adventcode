@@ -31,7 +31,7 @@ def solve2():
     visited = set()
     visited.add((0,0))
     def walk_block(loc, d, my_len):
-        for i in xrange(my_len):
+        for i in range(my_len):
             loc = (loc[0] + d[0], loc[1] + d[1])
             if loc in visited:
                 return loc, True
