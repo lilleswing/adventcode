@@ -86,6 +86,7 @@ func part2(s string) {
 			gCount -= 1
 			continue
 		}
+		panic("State Machine Broken")
 	}
 	fmt.Println(nGarbage)
 }
