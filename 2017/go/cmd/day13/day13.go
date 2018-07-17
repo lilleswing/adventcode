@@ -79,6 +79,8 @@ func part2(layers []Layer) {
 	fmt.Println(timesteps)
 }
 
+// Go is pass by value on structs so passing it to a function does a deep copy!
+// NEAT!
 func deepCopyLayer(layer Layer) Layer {
 	return layer
 }
