@@ -21,8 +21,12 @@ else
     echo "Using Existing Conda"
 fi
 
-# Install Libraries
 conda config --add channels conda-forge
-conda install -y delegator
+if [[ $NO_ENV -eq 0 ]]; then
+    conda create -y --name $ENV_NAME delegator
+    source activate $ENV_NAME
+else
+    conda install -y -q delegator
+fi
 
 python devtools/install/conda_install_from_json.py devtools/install/requirements.json
