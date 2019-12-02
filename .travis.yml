@@ -8,5 +8,6 @@ install:
 - source activate aoc2019
 - python setup.py install
 script:
+- cd 2019
 - nosetests -q aoc2019/* --nologcapture
 
