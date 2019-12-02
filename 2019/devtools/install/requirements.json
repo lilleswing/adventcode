@@ -1,0 +1,16 @@
+{
+  "channels": [
+    "conda-forge",
+  ],
+  "packages": [
+    "nose>=1.3.7",
+    "nose-timer",
+    "python>=3.6"
+  ],
+  "wheels": [
+  ],
+  "cpu_packages": [
+  ],
+  "gpu_packages": [
+  ]
+}
