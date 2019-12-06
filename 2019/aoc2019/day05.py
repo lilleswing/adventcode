@@ -1,3 +1,5 @@
+from typing import List
+
 from aoc2019 import read_file
 
 
