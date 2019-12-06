@@ -11,11 +11,11 @@ def read_file(fname):
 
 
 class Elf(object):
-    def __init__(self, r, c):
+    def __init__(self, r, c, attack=3):
         self.team = 'elf'
         self.character = 'E'
         self.hp = 200
-        self.attack = 3
+        self.attack = attack
         self.r = r
         self.c = c
 
@@ -71,14 +71,14 @@ def make_graph(board, combatant):
 
 
 class Battle(object):
-    def __init__(self, board):
+    def __init__(self, board, elf_attack=3):
         self.board = [list(x) for x in board]
-        self.combatants = self._make_combatants()
+        self.combatants = self._make_combatants(elf_attack)
         self.finished = False
         self.round = 0
         self.finishing_round = -1
 
-    def _make_combatants(self):
+    def _make_combatants(self, elf_attack):
         combatants = []
         for r, row in enumerate(self.board):
             for c, pixel in enumerate(row):
@@ -86,12 +86,48 @@ class Battle(object):
                     g = Goblin(r, c)
                     combatants.append(g)
                 if pixel == 'E':
-                    e = Elf(r, c)
+                    e = Elf(r, c, elf_attack)
                     combatants.append(e)
         return combatants
 
     def _get_enemies(self, team):
         return [x for x in self.combatants if x.team != team]
+
+    def _pick_move3(self, combatant, target_squares):
+        """
+        BFS
+        """
+        target_squares = set(target_squares)
+        my_loc = (combatant.r, combatant.c)
+        starting_squares = get_adj_squares(self.board, my_loc[0], my_loc[1])
+        starting_squares = [(r, c) for r, c in starting_squares if self.board[r][c] == '.']
+        seen = set()
+        q = collections.deque()
+        for elem in starting_squares:
+            q.append([elem, elem, 0])
+            seen.add(elem)
+        max_depth = 100000000
+        answers = set()
+        while len(q) > 0:
+            next_move, expand_node, depth = q.popleft()
+            if depth > max_depth:
+                break
+            if expand_node in target_squares:
+                answers.add((next_move, expand_node))
+                max_depth = depth
+                continue
+            to_enqueue = get_adj_squares(self.board, expand_node[0], expand_node[1])
+            to_enqueue = [(r, c) for r, c in to_enqueue if self.board[r][c] == '.']
+            for elem in to_enqueue:
+                if elem in seen:
+                    continue
+                q.append([next_move, elem, depth + 1])
+                seen.add(elem)
+        if len(answers) == 0:
+            return None
+        # Sort by reading order of landing location
+        answers = sorted(answers, key=lambda x: x[1])
+        return answers[0][0]
 
     def _pick_move2(self, combatant, target_squares):
         """
@@ -153,7 +189,7 @@ class Battle(object):
         target_squares = self._get_target_squares(enemies)
         if len(target_squares) == 0:
             return
-        new_square = self._pick_move2(combatant, target_squares)
+        new_square = self._pick_move3(combatant, target_squares)
         if new_square is None:
             return
         self._update_board_state(combatant, new_square)
@@ -206,8 +242,6 @@ class Battle(object):
 
     def fight_to_completion(self):
         while not self.finished:
-            if self.round % 10 == 0:
-                print("Starting Round %s" % self.round)
             self.fight_round()
 
     def _get_target_squares(self, enemies):
@@ -239,6 +273,9 @@ class Battle(object):
             print("".join(row))
         print()
 
+    def count_elfs(self):
+        return sum([1 for x in self.combatants if x.team == 'elf'])
+
 
 def run_file(fname):
     board = read_file(fname)
@@ -247,12 +284,12 @@ def run_file(fname):
     battle.print_board()
     for combatant in battle.combatants:
         print("HP:%s" % combatant.hp)
-    print("Finished on Round: %s"  % battle.finishing_round)
+    print("Finished on Round: %s" % battle.finishing_round)
     return battle.outcome()
 
 
 def solve1():
-    print(run_file('day15.in'))
+    return run_file('day15.in')
 
 
 def test_1():
@@ -275,6 +312,28 @@ def test_5():
     assert 18740 == run_file('day15.sample5')
 
 
+def do_elves_die(elf_attack):
+    board = read_file('day15.in')
+    battle = Battle(board, elf_attack)
+    starting_elfs = battle.count_elfs()
+    battle.fight_to_completion()
+    ending_elfs = battle.count_elfs()
+    print(starting_elfs, ending_elfs)
+    if starting_elfs == ending_elfs:
+        return battle.outcome()
+    else:
+        return -1
+
+
+def solve2():
+    outcome = -1
+    attack = 3
+    while outcome == -1:
+        attack += 1
+        outcome = do_elves_die(attack)
+    return outcome
+
+
 if __name__ == "__main__":
     # test_5()
-    solve1()
+    solve2()
