@@ -1,19 +1,13 @@
 from aoc2019 import read_file
 import numpy as np
+import matplotlib.pyplot as plt
 
 
-def calc_checksum(layer):
-    num_ones = np.sum(layer == 1)
-    num_twos = np.sum(layer == 2)
-    return num_ones * num_twos
-
-
-def solve1():
+def get_layers():
     l = read_file('day8.in')
     l = [int(x) for x in list(l)[0]]
     width = 25
     height = 6
-
     index = 0
     layers = []
     while index < len(l):
@@ -23,7 +17,17 @@ def solve1():
                 layer[h][w] = l[index]
                 index += 1
         layers.append(layer)
+    return layers
 
+
+def calc_checksum(layer):
+    num_ones = np.sum(layer == 1)
+    num_twos = np.sum(layer == 2)
+    return num_ones * num_twos
+
+
+def solve1():
+    layers = get_layers()
     min_zeros = 1000000
     checksum = None
     for layer in layers:
@@ -51,4 +55,11 @@ def calc_single_layer(layers):
 
 def test_solve1():
     assert solve1() == 2500
+
+
+def solve2():
+    layers = get_layers()
+    single_layer = calc_single_layer(layers)
+    plt.imshow(single_layer)
+    plt.savefig('day08.png')
 
