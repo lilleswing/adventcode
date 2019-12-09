@@ -1,4 +1,5 @@
 from typing import List
+from collections import defaultdict
 
 
 def read_file(fname):
@@ -15,10 +16,12 @@ class Computer(object):
     JIF_OP_CODE = 6
     LT_OP_CODE = 7
     EQ_OP_CODE = 8
+    REL_BASE_CODE = 9
     HALT_OP_CODE = 99
 
     POSITION_MODE = 0
     IMMEDIATE_MODE = 1
+    RELATIVE_MODE = 2
 
     def __init__(self, l: List[int], my_input: List[int] = None):
         """
@@ -28,9 +31,12 @@ class Computer(object):
         if my_input is None:
             my_input = []
         self.index = 0
-        self.l = list(l)
+        self.l = defaultdict(int)
+        for i, elem in enumerate(l):
+            self.l[i] = elem
         self.complete = False
         self.input = my_input
+        self.relative_base = 0
         self.outputs = []
 
     def _zero_pad(self, i, op_numbers):
@@ -48,16 +54,28 @@ class Computer(object):
     def get_variable(self, value, mode):
         if mode == Computer.POSITION_MODE:
             return self.l[value]
+        if mode == Computer.RELATIVE_MODE:
+            return self.l[value + self.relative_base]
         return value
 
-    def get_register(self, index):
+    def get_dest_index(self, index, op_code):
+        dest_index = self.get_register(index)
+        if op_code == Computer.RELATIVE_MODE:
+            return dest_index + self.relative_base
+        return dest_index
+
+    def get_register(self, index, op_code=None):
+        if op_code is None:
+            return self.l[index]
+        if op_code == Computer.RELATIVE_MODE:
+            return self.l[index] + self.relative_base
         return self.l[index]
 
     def _add(self, op_code):
         v1 = self.get_variable(self.get_register(self.index + 1), op_code[0])
         v2 = self.get_variable(self.get_register(self.index + 2), op_code[1])
         result = v1 + v2
-        dest_index = self.get_register(self.index + 3)
+        dest_index = self.get_register(self.index + 3, op_code[2])
         self.l[dest_index] = result
         self.index += 4
 
@@ -80,7 +98,7 @@ class Computer(object):
     def _lt(self, op_code):
         v1 = self.get_variable(self.get_register(self.index + 1), op_code[0])
         v2 = self.get_variable(self.get_register(self.index + 2), op_code[1])
-        dest_index = self.get_register(self.index + 3)
+        dest_index = self.get_register(self.index + 3, op_code[2])
         if v1 < v2:
             self.l[dest_index] = 1
         else:
@@ -90,7 +108,7 @@ class Computer(object):
     def _eq(self, op_code):
         v1 = self.get_variable(self.get_register(self.index + 1), op_code[0])
         v2 = self.get_variable(self.get_register(self.index + 2), op_code[1])
-        dest_index = self.get_register(self.index + 3)
+        dest_index = self.get_register(self.index + 3, op_code[2])
         if v1 == v2:
             self.l[dest_index] = 1
         else:
@@ -101,7 +119,7 @@ class Computer(object):
         v1 = self.get_variable(self.get_register(self.index + 1), op_code[0])
         v2 = self.get_variable(self.get_register(self.index + 2), op_code[1])
         result = v1 * v2
-        dest_index = self.get_register(self.index + 3)
+        dest_index = self.get_register(self.index + 3, op_code[2])
         self.l[dest_index] = result
         self.index += 4
 
@@ -111,7 +129,7 @@ class Computer(object):
     def _input(self, op_code):
         if self.input is None or len(self.input) == 0:
             raise ValueError("Attempted Input without Setting One From user")
-        v1 = self.get_register(self.index + 1)
+        v1 = self.get_register(self.index + 1, op_code[0])
         self.l[v1] = self.input[0]
         self.input = self.input[1:]
         self.index += 2
@@ -119,6 +137,11 @@ class Computer(object):
     def _output(self, op_code):
         v1 = self.get_variable(self.get_register(self.index + 1), op_code[0])
         self.outputs.append(v1)
+        self.index += 2
+
+    def _adj_relative_base(self, op_code):
+        v1 = self.get_variable(self.get_register(self.index + 1), op_code[0])
+        self.relative_base += v1
         self.index += 2
 
     def _run_step(self):
@@ -150,6 +173,9 @@ class Computer(object):
             return
         if switch_code == Computer.EQ_OP_CODE:
             self._eq(op_code)
+            return
+        if switch_code == Computer.REL_BASE_CODE:
+            self._adj_relative_base(op_code)
             return
         raise ValueError()
 
