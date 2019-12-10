@@ -93,17 +93,20 @@ def solve2(fname='day10.in'):
                 continue
             dx = c - s_x
             dy = s_y - r
-            angle = get_angle(dx, dy)
+            angle = get_angle(dx, dy)  # DeDupe on exact angles
             if angle not in ordered:
                 ordered[angle] = []
             rho, phi = cart2pol(dx, dy)
-            ordered[angle].append((rho, phi, (r, c)))
+            ordered[angle].append((rho, phi, (r, c)))  # add approximate angles for sorting
 
     ordered_by_angle = []
     for k, v in ordered.items():
+        # Internal Sort by Distance from Origin
         v = sorted(v, key=lambda x: x[0])
         ordered[k] = v
         ordered_by_angle.append(v)
+
+    # Sort by Angle
     ordered_by_angle = sorted(ordered_by_angle, key=lambda x: x[0][1])
 
     ordered_destruction = []
