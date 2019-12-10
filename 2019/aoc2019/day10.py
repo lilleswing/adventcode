@@ -76,7 +76,7 @@ def find_station(fname):
             if seen > max_seen:
                 station = (r, c)
                 max_seen = seen
-    print("Station at (%s,%s)" % station)
+    print("Station at %s" % str(station))
     return station, board
 
 

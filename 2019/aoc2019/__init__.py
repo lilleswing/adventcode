@@ -1,8 +1,12 @@
 from typing import List
+import os
 from collections import defaultdict
+
+ASSET_FOLDER = os.path.join(os.path.dirname(__file__), 'data')
 
 
 def read_file(fname):
+    fname = os.path.join(ASSET_FOLDER, fname)
     with open(fname) as fin:
         return [x.strip() for x in fin.readlines()]
 
