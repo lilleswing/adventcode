@@ -224,7 +224,7 @@ def test_solve1():
 
 
 def test_solve2():
-    assert solve1() == 410
+    assert solve2() == 410
 
 
 if __name__ == "__main__":
