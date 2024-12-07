@@ -75,7 +75,6 @@ def part2(fname):
     total = 0
     for p in possible:
         if is_loop(board, guard_pos, p):
-            print(p)
             total += 1
     print(total)
 
