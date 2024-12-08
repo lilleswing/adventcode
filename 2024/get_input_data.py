@@ -1,5 +1,8 @@
+import datetime
 import sys
+
 import requests
+
 
 def main(day, cookie):
     url = f"https://adventofcode.com/2024/day/{day}/input"
@@ -23,15 +26,12 @@ def read_cookie_from_env():
     raise ValueError("Failed to read cookie from .env")
 
 if __name__ == "__main__":
-    if len(sys.argv) == 1:
-        import datetime
+    args = list(sys.argv)
+    if len(args) == 1:
         now = datetime.datetime.now()
         day_of_month = now.day
-    else:
-        day_of_month = int(sys.argv[1])
-    if len(sys.argv) >= 2:
-        cookie = sys.argv[2]
-    else:
+        args.append(day_of_month)
+    if len(args) == 2:
         cookie = read_cookie_from_env()
-    print(f"Getting for {day_of_month}")
-    main(day_of_month, cookie)
+        args.append(cookie)
+    main(args[1], args[2])
