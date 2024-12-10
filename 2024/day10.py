@@ -65,6 +65,28 @@ def score2(g, p, end_states):
         total += len(paths)
     return total
 
+# Do a top down DP instead of recalculating simple paths over and over
+def dfs_memoize_cache(func):
+    memoize = {}
+    def wrapper(*args, **kwargs):
+        if args[1] in memoize:
+            return memoize[args[1]]
+        retval = func(*args, **kwargs)
+        memoize[args[1]] = retval
+        return retval
+    return wrapper
+
+@dfs_memoize_cache
+def dfs(g, p, end_states):
+    if p in end_states:
+        return 1
+    total = 0
+    for n in g[p]:
+        total += dfs(g, n, end_states)
+    return total
+
+def score2_fast(g, p, end_states):
+    return dfs(g, p, end_states)
 
 def part2(fname):
     lines = open(fname).readlines()
@@ -78,7 +100,7 @@ def part2(fname):
         for c in range(len(lines[0])):
             if lines[r][c] == 0:
                 p = (r, c)
-                total += score2(g, p, end_states)
+                total += score2_fast(g, p, end_states)
     print(total)
     return total
 
