@@ -17,6 +17,7 @@ def main(day, cookie):
         raise ValueError("Failed to get input data")
     with open(f"day{day}.in", "w") as f:
         f.write(response.text)
+    print(response.text)
 
 def read_cookie_from_env():
     lines = open('.env').readlines()
