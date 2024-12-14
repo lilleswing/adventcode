@@ -94,6 +94,13 @@ def plot_var(a):
     plt.savefig('var_y.png')
 
 
+def save_tree(robots, steps, mod_x, mod_y):
+    positions = [x.move_steps(steps, mod_x, mod_y) for x in robots]
+    positions = np.array(positions)
+    plt.scatter(positions[:, 0], positions[:, 1])
+    plt.savefig('tree.png')
+
+
 def part2(fname):
     wide = 101
     tall = 103
@@ -107,6 +114,7 @@ def part2(fname):
         variances.append((my_var, i))
     # plot_var([x[0] for x in variances])
     variances = sorted(variances, key=lambda x: sum(x[0]))
+    save_tree(robots, variances[0][1], wide, tall)
     print("Variation: ", variances[0][0])
     print("Frame: ", variances[0][1])
 
