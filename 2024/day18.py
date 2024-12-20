@@ -27,11 +27,17 @@ def make_graph(fname, row_len, col_len, num_squares=1024):
 
 
 def print_board(d, row_len, col_len):
+    """
+    :param d:
+    :param row_len:
+    :param col_len:
+    :return:
+
+    """
     for r in range(row_len):
         for c in range(col_len):
             print(d[(r, c)], end='')
         print()
-
 
 def part1(fname):
     if fname == 'day18.sample':
@@ -45,7 +51,6 @@ def part1(fname):
     g, source, sink = make_graph(fname, row_len, col_len, num_squares)
     steps = nx.shortest_path_length(g, source, sink)
     print(steps)
-
 
 def part2(fname):
     row_len = 71

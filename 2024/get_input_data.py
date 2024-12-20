@@ -1,4 +1,5 @@
 import datetime
+import os.path
 import sys
 
 import requests
@@ -19,12 +20,24 @@ def main(day, cookie):
         f.write(response.text)
     print(response.text)
 
+    sample_fname = f"day{day}.sample"
+    if not os.path.exists(sample_fname):
+        with open(sample_fname, "w") as f:
+            f.write("")
+
+    app_fname = f"day{day}.py"
+    if not os.path.exists(app_fname):
+        with open(app_fname, "w") as f:
+            f.write(f"")
+
+
 def read_cookie_from_env():
     lines = open('.env').readlines()
     for line in lines:
         if line.startswith('COOKIE='):
             return line.split('=')[1].strip()
     raise ValueError("Failed to read cookie from .env")
+
 
 if __name__ == "__main__":
     args = list(sys.argv)
