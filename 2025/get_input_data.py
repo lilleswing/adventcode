@@ -28,7 +28,7 @@ def main(day, cookie):
     app_fname = f"day{day}.py"
     if not os.path.exists(app_fname):
         with open(app_fname, "w") as f:
-            f.write(f"")
+            f.write("")
 
 
 def read_cookie_from_env():
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     if len(args) == 1:
         now = datetime.datetime.now()
         day_of_month = now.day
-        args.append(day_of_month)
+        args.append(str(day_of_month))
     if len(args) == 2:
         cookie = read_cookie_from_env()
         args.append(cookie)
