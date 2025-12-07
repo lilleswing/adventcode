@@ -4,7 +4,7 @@ class Window(object):
         self.high = high
 
     def is_in(self, n):
-        return self.low <= n and self.high >= n
+        return self.low <= n <= self.high
 
     def __repr__(self) -> str:
         return f"[{self.low}, {self.high}]"
